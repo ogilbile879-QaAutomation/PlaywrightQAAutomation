@@ -58,6 +58,21 @@ await page.goto('https://rahulshettyacademy.com/client/')
     const orderId=await page.locator(".em-spacer-1 .ng-star-inserted").textContent()
     console.log(orderId)
 
-    await page.pause()
+    await page.locator("button[routerlink*='myorders']").click()
+    await page.locator("tbody").waitFor()
+    const rows=await page.locator("tbody tr")
+
+    for (let i=0;i<await rows.count();++i){
+        const roworderid=await rows.nth(i).locator("th").textContent()
+        console.log(roworderid)
+        if(orderId.includes(roworderid)){
+            await rows.nth(i).locator("button").first().click()
+            break
+        }
+    }
+    const orderIdDetails=await page.locator("div .col-text").textContent()
+    expect(orderId.includes(orderIdDetails)).toBeTruthy()
+
+    page.pause()
 
     })
